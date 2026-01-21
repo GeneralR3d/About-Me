@@ -10,6 +10,17 @@ export default class ContactCubes {
         this.textureLoader.setCrossOrigin('anonymous')
 
         this.createCubes()
+
+        // Popup Elements
+        this.popup = document.getElementById('popup')
+        this.popupContent = document.getElementById('popup-content')
+        this.popupClose = document.getElementById('popup-close')
+
+        if (this.popupClose) {
+            this.popupClose.addEventListener('click', () => {
+                if (this.popup) this.popup.classList.add('hidden')
+            })
+        }
     }
 
     createCubes() {
@@ -54,7 +65,7 @@ export default class ContactCubes {
         const githubMaterial = createMaterialFromUrl('/icons/github-logo-6532.png')
 
         this.githubCube = new THREE.Mesh(boxGeometry, githubMaterial)
-        this.githubCube.position.set(-2, 0, 0) // Start high to fall
+        this.githubCube.position.set(-3, 0, 0) // Start high to fall
         this.githubCube.castShadow = true
         this.githubCube.receiveShadow = true
         this.githubCube.userData.parent = this
@@ -72,7 +83,7 @@ export default class ContactCubes {
         const linkedinMaterial = createMaterialFromUrl('/icons/black-linkedin-logo-15915.png')
 
         this.linkedinCube = new THREE.Mesh(boxGeometry, linkedinMaterial)
-        this.linkedinCube.position.set(2, 0, 0)
+        this.linkedinCube.position.set(3, 0, 0)
         this.linkedinCube.castShadow = true
         this.linkedinCube.receiveShadow = true
         this.linkedinCube.userData.parent = this
@@ -85,6 +96,24 @@ export default class ContactCubes {
             const shape = this.physics.createBoxShape(size, size, size)
             this.physics.createBody(this.linkedinCube, 50, shape)
         }
+
+        // Gmail Cube
+        const gmailMaterial = createMaterialFromUrl('/icons/google-gmail-black-24179.png')
+
+        this.gmailCube = new THREE.Mesh(boxGeometry, gmailMaterial)
+        this.gmailCube.position.set(0, 0, 0)
+        this.gmailCube.castShadow = true
+        this.gmailCube.receiveShadow = true
+        this.gmailCube.userData.parent = this
+        this.gmailCube.userData.type = 'gmail'
+
+        this.scene.add(this.gmailCube)
+
+        // Physics for Gmail Cube
+        if (this.physics && this.physics.physicsWorld) {
+            const shape = this.physics.createBoxShape(size, size, size)
+            this.physics.createBody(this.gmailCube, 45, shape)
+        }
     }
 
     onClick(object) {
@@ -94,6 +123,12 @@ export default class ContactCubes {
         } else if (object.userData.type === 'linkedin') {
             console.log('LinkedIn Cube Clicked')
             window.open('https://linkedin.com/in/ding-ren-tuan', '_blank')
+        } else if (object.userData.type === 'gmail') {
+            console.log('Gmail Cube Clicked')
+            if (this.popup && this.popupContent) {
+                this.popupContent.innerText = 'tdrdingren@gmail.com'
+                this.popup.classList.remove('hidden')
+            }
         }
     }
 }

@@ -4,11 +4,11 @@ export const content = [
         title: "TUAN DING REN",
         position: { x: 0, z: 0 },
         rotation: 0,
-        text: `Email: tuandingren@gmail.com\n
-                Languages: Python, TS, JS, C, SQL w Prisma ORM
-                Frameworks: ReactTS, NestJS, Flask, Django, LangChain, LangGraph, TailwindCSS
-                AI: LLMs, RAG, PyTorch, Time Series Analysis
-                Tools: AWS, Auzre DevOps Docker, Git, Jira, Confluence
+        text: `
+        Languages: Python, TS, JS, C, SQL w Prisma ORM
+        Frameworks: ReactTS, NestJS, Flask, Django, LangChain, LangGraph, TailwindCSS
+        AI: LLMs, RAG, PyTorch, Time Series Analysis
+        Tools: AWS, Auzre DevOps Docker, Git, Jira, Confluence
         `
     },
     {
@@ -127,8 +127,7 @@ export const content = [
         title: "STM-32 Self-Balancing Gimbal",
         position: { x: -42, z: 0 }, // West (Back)
         rotation: 0,
-        text: `
-        Performed sensor integration of accelerometer and gyroscope data on Inertial Measurement Unit (IMU)
+        text: `Performed sensor integration of accelerometer and gyroscope data on Inertial Measurement Unit (IMU)
         Implemented a PID controller making use of IMU data to devise a self-correcting two-axis gimbal mounted on servo motors`
     },
     {
@@ -136,8 +135,7 @@ export const content = [
         title: "Accessible Education Unit, Student Notetaker",
         position: { x: 0, z: 30 }, // South (Center)
         rotation: 0,
-        text: `
-        Jul 2023 – Apr 2024
+        text: `Jul 2023 – Apr 2024
         Provided clear, accurate and comprehensive notetaking as a record of classes and lectures for fellow peers 
         Advocated for inclusivity and accessibility of education at NTU to students with additional sensory and learning difficulties, specifically visual, auditory and writing challenges`
     },
@@ -146,8 +144,7 @@ export const content = [
         title: "Outdoor Adventure Club",
         position: { x: -12, z: 35 }, // South (Right when looking South, or West-South)
         rotation: 0,
-        text: `
-        Aug 2023 – Aug 2024
+        text: `Aug 2023 – Aug 2024
         Co-organized and led a team of 40 individuals on week-long overseas hiking/trekking adventures.
         Coordinated with foreign adventure tour guide agencies on hiking, accommodation, and transport arrangements.`
     },
