@@ -24,6 +24,8 @@ export default class Map {
         this.createArrows()
 
         this.leaves = new Leaves(game)
+
+        this.createLakeTahoe()
     }
 
     // Base noise function
@@ -56,6 +58,43 @@ export default class Map {
 
             // Combine
             y += mHeight + rough
+        }
+
+        // LAKE TAHOE (West -> Negative X)
+        // Positioned at (-25, -5)
+        const lx = -25
+        const lz = -5
+        const lDist = Math.sqrt((x - lx) ** 2 + (z - lz) ** 2)
+
+        // Basin Logic:
+        // Center (-25, -5) should be deep (e.g. -3)
+        // Water level is 1.5.
+        // Shoreline should be around radius 9.
+        // Rim should be around radius 12-15 blending to terrain.
+
+        if (lDist < 20) {
+            // Calculate Lake Basin Profile
+            // Linear slope: H = -3.5 + 0.6 * lDist
+            // At 0 => -3.5 (Deep)
+            // At 8.3 => 1.5 (Water Level)
+            // At 15 => 5.5 (Rim Height)
+
+            let lakeH = -3.5 + 0.6 * lDist;
+
+            // Add some noise to the bed/banks
+            lakeH += this.noise.zoom2D(x * 0.2, z * 0.2) * 0.5;
+
+            // Blend to existing noise terrain 'y' 
+            // We want full override near center, blend out at 15-20
+            const blendStart = 12;
+            const blendEnd = 20;
+
+            if (lDist < blendStart) {
+                y = lakeH;
+            } else if (lDist < blendEnd) {
+                const alpha = THREE.MathUtils.smoothstep(lDist, blendStart, blendEnd);
+                y = THREE.MathUtils.lerp(lakeH, y, alpha);
+            }
         }
 
         return Math.max(y, -2)
@@ -128,12 +167,27 @@ export default class Map {
             if (h > maxHeight) maxHeight = h
 
             // Determine Color
+            // Lake Tahoe Bed Coloring
+            // Lake Center (-25, -5)
+            const lDist = Math.sqrt((x - (-25)) ** 2 + (z_world - (-5)) ** 2)
+
             if (isRoad) {
                 if (Math.abs(x) < 0.3 && (z_world % 4 < 2)) {
                     // Center Line (Dashed)
                     colors.push(colorLine.r, colorLine.g, colorLine.b)
                 } else {
                     colors.push(colorRoad.r, colorRoad.g, colorRoad.b)
+                }
+            }
+            else if (lDist < 10 && h < 2.0) {
+                // Lake Bed (Sand/Rock)
+                // If deep, maybe darker?
+                if (h < 0) {
+                    // Deep - Dark Grey/Blueish ground? Or just Sand.
+                    colors.push(colorSand.r * 0.8, colorSand.g * 0.8, colorSand.b * 0.8)
+                } else {
+                    // Shore - Sand
+                    colors.push(colorSand.r, colorSand.g, colorSand.b)
                 }
             }
             // If it is the mountain (high altitude or specific area), make it grey
@@ -226,18 +280,27 @@ export default class Map {
             )
         }
 
-        // California Zone Marker
-        const caliGeo = new THREE.CylinderGeometry(15, 15, 1.1, 8)
-        const caliMat = new THREE.MeshStandardMaterial({ color: '#fdd835', transparent: true, opacity: 0.5 })
-        this.caliZone = new THREE.Mesh(caliGeo, caliMat)
-        // Adjust to conform roughly
-        const h = this.getHeightAt(-25, -5)
-        // Ensure we don't place it underground if terrain changed
-        this.caliZone.position.set(-25, Math.max(h, 0) + 0.5, -5)
-        this.caliZone.receiveShadow = true
-        this.scene.add(this.caliZone)
+        // California Zone Marker REMOVED
 
         this.createBoundaryLines()
+    }
+
+    createLakeTahoe() {
+        // Radius 9.5 to extend slightly beyond the "shoreline" calculated at ~8.3
+        // This ensures the edge is buried in the terrain bank
+        const geometry = new THREE.CircleGeometry(9.5, 64)
+        const material = new THREE.MeshStandardMaterial({
+            color: '#4fc3f7', // Slightly deeper blue
+            metalness: 0.2,
+            roughness: 0.1,
+            transparent: true,
+            opacity: 0.7,
+            side: THREE.DoubleSide
+        })
+        this.lake = new THREE.Mesh(geometry, material)
+        this.lake.rotation.x = -Math.PI / 2
+        this.lake.position.set(-25, 1.5, -5) // Water Level
+        this.scene.add(this.lake)
     }
 
     createBoundaryLines() {
@@ -341,6 +404,10 @@ export default class Map {
 
             if (x * x + z * z > 50 * 50) continue
 
+            // Avoid Lake Tahoe
+            const lDist = Math.sqrt((x - (-25)) ** 2 + (z - (-5)) ** 2)
+            if (lDist < 10) continue
+
             const h = this.getHeightAt(x, z)
             const y = h - 0.5
 
@@ -348,6 +415,24 @@ export default class Map {
             stone.position.set(x, y + 0.2, z)
             stone.castShadow = true
             this.scene.add(stone)
+        }
+
+        // Trees around Lake Tahoe
+        for (let i = 0; i < 40; i++) {
+            const angle = (Math.random() * Math.PI * 2)
+            // Trees on the banks (High slope area)
+            // Shoreline is ~8.5. Rim is ~12-15.
+            const r = 9.0 + Math.random() * 6.0
+
+            const x = -25 + Math.cos(angle) * r
+            const z = -5 + Math.sin(angle) * r
+
+            const h = this.getHeightAt(x, z)
+            // Ensure we are ON LAND (Height > 1.5)
+            // And reasonable visibility
+            if (h > 1.6) {
+                new Tree(this.scene, { position: { x, y: h - 0.5, z } })
+            }
         }
     }
 
