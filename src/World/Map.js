@@ -5,6 +5,7 @@ import Tree from './Tree.js'
 import Leaves from './Leaves.js'
 import Noise from '../Utils/Noise.js'
 import { content } from '../Utils/ResumeData.js'
+import DirectionalArrows from './DirectionalArrows.js'
 
 export default class Map {
     constructor(game) {
@@ -17,6 +18,7 @@ export default class Map {
         this.createIsland()
         this.populateResumeContent()
         this.createNature()
+        this.createArrows()
 
         this.leaves = new Leaves(game)
     }
@@ -176,7 +178,14 @@ export default class Map {
     populateResumeContent() {
         this.texts = []
         content.forEach(data => {
-            this.texts.push(new WorldText(this.game, data))
+            let h = 0
+            if (data.position.x !== undefined && data.position.z !== undefined) {
+                h = this.getHeightAt(data.position.x, data.position.z)
+            }
+            // Add a small offset to ensure it sits on top.
+            // getHeightAt returns noise value. Terrain is noise - 0.5.
+            // So h is 0.5 above terrain. +1 makes it 1.5 above terrain.
+            this.texts.push(new WorldText(this.game, data, h + 1))
         })
     }
 
@@ -215,6 +224,10 @@ export default class Map {
             stone.castShadow = true
             this.scene.add(stone)
         }
+    }
+
+    createArrows() {
+        this.arrows = new DirectionalArrows(this.game)
     }
 
     update() {

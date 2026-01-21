@@ -85,7 +85,8 @@ export default class Game {
                 this.cameraVerticalAngle += deltaY * 0.005
 
                 // Clamp Vertical
-                this.cameraVerticalAngle = Math.max(0.1, Math.min(Math.PI / 2 - 0.1, this.cameraVerticalAngle))
+                // Allow negative angle (looking up from below)
+                this.cameraVerticalAngle = Math.max(-0.1, Math.min(Math.PI / 2 - 0.1, this.cameraVerticalAngle))
 
                 this.previousMousePosition = { x: e.clientX, y: e.clientY }
             }

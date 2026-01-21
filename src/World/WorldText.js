@@ -3,13 +3,20 @@ import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js'
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js'
 
 export default class WorldText {
-    constructor(game, data) {
+    constructor(game, data, baseHeight = 0) {
         this.game = game
         this.data = data
         this.scene = this.game.scene
 
         this.group = new THREE.Group()
-        this.group.position.set(data.position.x, 0, data.position.z)
+        // baseHeight is the terrain height. We add a slight offset (e.g. 0.5) to avoid clipping.
+        // But let's assume the caller handles major offsets, or we just put it flush.
+        // Actually, the user said "too low".
+        // The text creates 3D letters. The letters are created at local Y=2 (line 44 in create3DTitle, geometry.translate(0, 2, -2)).
+        // So global Y = baseHeight + 2.
+        // If the terrain is steep, it might clip.
+        // Let's set the group position to baseHeight.
+        this.group.position.set(data.position.x, baseHeight, data.position.z)
         this.group.rotation.y = data.rotation || 0
         this.scene.add(this.group)
 
@@ -170,7 +177,7 @@ export default class WorldText {
     }
 
     createTextPanel() {
-        const maxWidth = 800
+        const maxWidth = 1200
         const fontSize = 36
         const lineHeight = 46
         const padding = 30
@@ -235,39 +242,52 @@ export default class WorldText {
         texture.magFilter = THREE.LinearFilter
 
         // Plane Dimensions
-        const planeWidth = 10
+        const planeWidth = 15
         const planeHeight = planeWidth * (canvasHeight / canvasWidth)
+        const planeDepth = 0.5
 
-        const geometry = new THREE.PlaneGeometry(planeWidth, planeHeight)
+        const geometry = new THREE.BoxGeometry(planeWidth, planeHeight, planeDepth)
 
-        this.panelMaterial = new THREE.MeshBasicMaterial({
-            map: texture,
+        // Materials
+        const sideMat = new THREE.MeshBasicMaterial({
+            color: 0x000000,
             transparent: true,
-            opacity: 0, // Start hidden
-            side: THREE.DoubleSide,
-            depthWrite: false // Don't block other transparent objects
+            opacity: 0,
+            side: THREE.FrontSide
         })
 
-        this.panelMesh = new THREE.Mesh(geometry, this.panelMaterial)
+        const frontMat = new THREE.MeshBasicMaterial({
+            map: texture,
+            transparent: true,
+            opacity: 0,
+            side: THREE.FrontSide
+        })
+
+        // Box Face Material Order: Right, Left, Top, Bottom, Front, Back
+        const materials = [
+            sideMat, sideMat, sideMat, sideMat, frontMat, sideMat
+        ]
+
+        this.panelMesh = new THREE.Mesh(geometry, materials)
 
         // Position relative to title
-        // Title is at (0, 2, -2). 
-        // Let's put panel below it or to the side.
-        // Let's try floating below/next to it.
-        this.panelMesh.position.set(0, 3.5, -2)
-        // Logic: Title is ~2 units up. Panel center is ~2 units up? 
-        // Let's place it "Behind" the title slightly? Or above?
-        // Let's place it to the side or simply centered but initially invisible.
-        // Let's put it purely vertical.
+        // Title Center Y is 2.0. Height is ~1.5. Top is ~2.75.
+        // We want the bottom of the panel to be above the title.
+        const titleTopY = 2.75
+        const margin = 0.5
+        const panelBottomY = titleTopY + margin
 
-        // Actually, let's look at rotation. Group Y rotation handles facing.
-        // Panel should be readable.
+        // Panel is a box centered at (0,0,0) locally.
+        // So we place it at panelBottomY + (planeHeight / 2)
+        const panelCenterY = panelBottomY + (planeHeight / 2)
+
+        this.panelMesh.position.set(0, panelCenterY, -2)
 
         this.group.add(this.panelMesh)
     }
 
     update() {
-        if (!this.panelMaterial || !this.game.character || !this.game.character.mesh) return
+        if (!this.panelMesh || !this.game.character || !this.game.character.mesh) return
 
         // Proximity Check
         const charPos = new THREE.Vector3()
@@ -278,19 +298,29 @@ export default class WorldText {
 
         const dist = charPos.distanceTo(myPos)
 
-        const triggerDist = 8
+        const triggerDist = 5
         const fadeSpeed = 0.05
+
+        const materials = Array.isArray(this.panelMesh.material) ? this.panelMesh.material : [this.panelMesh.material]
+        // Filter unique materials to avoid multi-apply
+        const uniqueMats = new Set(materials)
 
         if (dist < triggerDist) {
             // Fade In
-            if (this.panelMaterial.opacity < 1) {
-                this.panelMaterial.opacity += fadeSpeed
-            }
+            uniqueMats.forEach(mat => {
+                if (mat.opacity < 1) {
+                    mat.opacity += fadeSpeed
+                    if (mat.opacity > 1) mat.opacity = 1
+                }
+            })
         } else {
             // Fade Out
-            if (this.panelMaterial.opacity > 0) {
-                this.panelMaterial.opacity -= fadeSpeed
-            }
+            uniqueMats.forEach(mat => {
+                if (mat.opacity > 0) {
+                    mat.opacity -= fadeSpeed
+                    if (mat.opacity < 0) mat.opacity = 0
+                }
+            })
         }
     }
 }
