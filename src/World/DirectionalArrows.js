@@ -1,173 +1,168 @@
 import * as THREE from 'three'
 
 export default class DirectionalArrows {
-    constructor(game) {
+    constructor(game, map) {
         this.game = game
         this.scene = this.game.scene
         this.physics = this.game.physics
+        this.map = map
 
-        this.arrows = []
-        this.createArrows()
+        this.signs = []
+        this.createSigns()
     }
 
-    createArrows() {
+    createSigns() {
         const directions = [
-            { label: 'Experience', dir: 'North', x: 0, z: -4, color: '#e53935', rotY: 0 },             // Points -Z
-            { label: 'Activities', dir: 'South', x: 0, z: 4, color: '#43a047', rotY: Math.PI },         // Points +Z
-            { label: 'Education', dir: 'East', x: 4, z: 0, color: '#1e88e5', rotY: -Math.PI / 2 },     // Points +X
-            { label: 'Projects', dir: 'West', x: -4, z: 0, color: '#fb8c00', rotY: Math.PI / 2 }       // Points -X
+            { label: 'Experience', dir: 'North', x: 0, z: -10, color: '#8b4513', rotY: 0 },             // Points -Z
+            { label: 'Activities', dir: 'South', x: 0, z: 10, color: '#8b4513', rotY: Math.PI },         // Points +Z
+            { label: 'Education', dir: 'East', x: 10, z: 0, color: '#8b4513', rotY: -Math.PI / 2 },     // Points +X
+            { label: 'Projects', dir: 'West', x: -10, z: 0, color: '#8b4513', rotY: Math.PI / 2 }       // Points -X
         ]
 
-        directions.forEach(cfg => this.createSingleArrow(cfg))
+        directions.forEach(cfg => this.createSingleSign(cfg))
     }
 
-    createSingleArrow(config) {
-        // Dimensions
-        const shaftWidth = 1.2
-        const shaftLength = 4
-        const headWidth = 3   // Wider head
-        const headLength = 2
-        const thickness = 0.8 // Height of the prism
+    createSingleSign(config) {
+        // Sign Dimensions
+        const postHeight = 5.5
+        const postRadius = 0.25
+        const boardWidth = 4.0
+        const boardHeight = 1.3
+        const boardThickness = 0.8 // Thicker board
 
-        // 1. Define Arrow Shape
+        // Group
+        const signGroup = new THREE.Group()
+
+        // 1. Post
+        const postGeo = new THREE.CylinderGeometry(postRadius, postRadius, postHeight, 8)
+        const postMat = new THREE.MeshStandardMaterial({
+            color: 0x5D4037, // Dark brown
+            roughness: 0.8
+        })
+        const postMesh = new THREE.Mesh(postGeo, postMat)
+        postMesh.castShadow = true
+        postMesh.receiveShadow = true
+        signGroup.add(postMesh)
+
+        // 2. Board
         const shape = new THREE.Shape()
-        // Start at bottom-left of shaft
-        shape.moveTo(-shaftWidth / 2, 0)
-        // Up shaft
-        shape.lineTo(-shaftWidth / 2, shaftLength)
-        // Out to head wing
-        shape.lineTo(-headWidth / 2, shaftLength)
-        // Tip
-        shape.lineTo(0, shaftLength + headLength)
-        // Other side wing
-        shape.lineTo(headWidth / 2, shaftLength)
-        // Back to shaft
-        shape.lineTo(shaftWidth / 2, shaftLength)
-        // Down shaft
-        shape.lineTo(shaftWidth / 2, 0)
-        // Close
-        shape.lineTo(-shaftWidth / 2, 0)
+        const halfH = boardHeight / 2
+        // Shape pointing Right (+X)
+        shape.moveTo(0, -halfH)
+        shape.lineTo(boardWidth - 0.5, -halfH)
+        shape.lineTo(boardWidth, 0)
+        shape.lineTo(boardWidth - 0.5, halfH)
+        shape.lineTo(0, halfH)
+        shape.lineTo(0, -halfH)
 
-        // 2. Extrude
         const extrudeSettings = {
             steps: 1,
-            depth: thickness,
+            depth: boardThickness,
             bevelEnabled: true,
-            bevelThickness: 0.1,
-            bevelSize: 0.1,
+            bevelThickness: 0.02,
+            bevelSize: 0.02,
             bevelSegments: 2
         }
 
-        const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings)
+        const boardGeo = new THREE.ExtrudeGeometry(shape, extrudeSettings)
+        boardGeo.center()
 
-        // Center the geometry so (0,0,0) is the center of mass
-        geometry.center()
-
-        const material = new THREE.MeshStandardMaterial({
-            color: config.color,
-            roughness: 0.3,
-            metalness: 0.2
+        const boardMat = new THREE.MeshStandardMaterial({
+            color: 0x8D6E63, // Lighter brown
+            roughness: 0.7
         })
+        const boardMesh = new THREE.Mesh(boardGeo, boardMat)
 
-        const arrowMesh = new THREE.Mesh(geometry, material)
-        arrowMesh.castShadow = true
-        arrowMesh.receiveShadow = true
+        // Position board on post
+        boardMesh.position.y = (postHeight / 2) - 0.8
+        boardMesh.position.x = 0
+
+        // Rotate board to point -Z (local forward)
+        // Shape is in XY pointing +X. Rotate Y +90 -> Points -Z.
+        boardMesh.rotation.y = Math.PI / 2
+
+        boardMesh.castShadow = true
+        boardMesh.receiveShadow = true
+        signGroup.add(boardMesh)
 
         // 3. Label
         const canvas = document.createElement('canvas')
-        canvas.width = 512
-        canvas.height = 128
+        canvas.width = 1024
+        canvas.height = 256
         const ctx = canvas.getContext('2d')
-        // Transparent bg
-        // ctx.fillStyle = config.color
-        // ctx.fillRect(0,0,512,128)
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)' // White text
-        // Add a stroke or shadow for visibility?
-        ctx.shadowColor = "black"
-        ctx.shadowBlur = 5
-        ctx.font = 'bold 80px Arial'
+
+        // Clear background
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+        // Text
+        ctx.fillStyle = '#3E2723' // Dark text (engraved look)
+        ctx.shadowColor = "rgba(255,255,255,0.4)"
+        ctx.shadowBlur = 0
+        ctx.shadowOffsetX = 1
+        ctx.shadowOffsetY = 1
+
+        ctx.font = 'bold 150px Arial'
         ctx.textAlign = 'center'
         ctx.textBaseline = 'middle'
-        ctx.fillText(config.label.toUpperCase(), 256, 64)
+        ctx.fillText(config.label.toUpperCase(), 512, 128)
 
         const labelTexture = new THREE.CanvasTexture(canvas)
-        const labelGeo = new THREE.PlaneGeometry(6, 1.5)
+        const labelGeo = new THREE.PlaneGeometry(3.2, 0.8)
         const labelMat = new THREE.MeshBasicMaterial({
             map: labelTexture,
             transparent: true,
-            side: THREE.DoubleSide,
-            alphaTest: 0.1
+            side: THREE.DoubleSide
         })
-        const labelMesh = new THREE.Mesh(labelGeo, labelMat)
 
-        // Position Label: Above the arrow
-        // Geometry is centered. Thickness is along Z (originally).
-        // Bounds: Z from -thickness/2 to thickness/2.
-        // We want label on top face.
-        labelMesh.position.z = (thickness / 2) + 0.1
+        // Front Face (Z+) relative to boardMesh
+        const label1 = new THREE.Mesh(labelGeo, labelMat)
+        label1.position.z = (boardThickness / 2) + 0.02
+        boardMesh.add(label1)
 
-        // arrowMesh is the parent. 
-        // Note: ExtrudeGeometry extrudes along Z. 
-        // Shape is in XY.
-        // So "Top" face is +Z.
-        // We want arrow flat on ground. Ground is XZ.
-        // So we rotate the MESH -90 on X?
-        // Let's attach label to mesh first.
+        // Back Face (Z-) - Rotate Y 180
+        const label2 = label1.clone()
+        label2.position.z = -(boardThickness / 2) - 0.02
+        label2.rotation.y = Math.PI
+        boardMesh.add(label2)
 
-        arrowMesh.add(labelMesh)
+        // 4. Global Transform
 
-        // 4. Group & Transform
-        const arrowGroup = new THREE.Group()
-        arrowGroup.add(arrowMesh)
+        // Calculate ground height
+        let groundY = 0
+        if (this.map) {
+            // map.getHeightAt returns h. Island is at -0.5.
+            groundY = this.map.getHeightAt(config.x, config.z) - 0.5
+        }
 
-        // Rotate Mesh to lie flat
-        // Shape XY, Extrude Z.
-        // Current: Standing up.
-        // Rotate X -90 -> Shape XZ, Extrude -Y? No.
-        // Rotate X -90 -> Z becomes Y? 
-        // Extrude axis was Z. Now Y. So thickness is vertical. Correct.
-        // Shape Y (Arrow length) becomes -Z (North).
-        // Shape X (Width) stays X.
+        // Plant the post.
+        // We want the post to be slightly submerged so it looks firm.
+        // Let's bury 0.5m of the 3.5m post.
+        // Center of post is at local 0.
+        // Post goes from -1.75 to +1.75.
+        // We want bottom (-1.75) to be at GroundY - 0.5.
+        // So CenterY should be GroundY - 0.5 + 1.75 = GroundY + 1.25.
+        const yPos = groundY + 1.75
 
-        arrowMesh.rotation.x = -Math.PI / 2
+        signGroup.position.set(config.x, yPos, config.z)
+        signGroup.rotation.y = config.rotY
 
-        // Now Label:
-        // Was at Z+. After mesh rot X -90, Z+ is Y+.
-        // So label is on top. Correct.
-        // Label orientation:
-        // Plane is XY. 
-        // Mesh X rot -90 -> Plane is XZ. Text reads along X?
-        // Our texture is horizontal. 
-        // If Arrow points North (-Z), we want text reading Left-Right.
-        // Label mesh rotation needs to be checked.
-        // Currently label is default rotation (0,0,0) relative to arrowMesh.
-        // arrowMesh is rotated -90 X.
-        // So label is also rotated -90 X. Lying flat.
-        // Texture is upright in UVs.
-        // Should be readable.
-
-        // Global Direction
-        arrowGroup.rotation.y = config.rotY
-        arrowGroup.position.set(config.x, 5, config.z)
-
-        this.scene.add(arrowGroup)
-        this.arrows.push(arrowGroup)
+        this.scene.add(signGroup)
+        this.signs.push(signGroup)
 
         // 5. Physics
         if (this.physics && this.physics.physicsWorld) {
-            // Box approximation works well for a prism flat on ground
-            const width = headWidth // Max width
-            const length = shaftLength + headLength
-            const height = thickness
+            // Box shape for the post + board approximation or just post?
+            // User said "firmly planted", "not movable". Mass = 0.
+            // A simple box for the exposed part is fine.
 
-            const shape = this.physics.createBoxShape(width, height, length)
-            const mass = 1000
+            const width = postRadius * 2
+            const depth = postRadius * 2
+            const height = postHeight
 
-            const body = this.physics.createBody(arrowGroup, mass, shape)
-            if (body) {
-                body.setFriction(0.8)
-                body.setRollingFriction(0.1)
-            }
+            const shape = this.physics.createBoxShape(width, height, depth)
+            const mass = 0 // Static
+
+            this.physics.createBody(signGroup, mass, shape)
         }
     }
 }

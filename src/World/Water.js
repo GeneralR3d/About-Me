@@ -27,8 +27,10 @@ export default class Water {
                     
                     vec4 modelPosition = modelMatrix * vec4(position, 1.0);
                     
-                    float elevation = sin(modelPosition.x * 0.5 + uTime) * 0.2;
-                    elevation += sin(modelPosition.z * 0.5 + uTime * 0.5) * 0.2;
+                    float elevation = sin(modelPosition.x * 0.4 + uTime * 1.2) * 0.4;
+                    elevation += sin(modelPosition.z * 0.3 + uTime * 0.8) * 0.4;
+                    elevation += sin(modelPosition.x * 1.5 + uTime * 0.5) * 0.1; // Small Detail
+                    elevation -= cos(modelPosition.z * 2.0 + uTime * 2.0) * 0.1; // Choppiness
                     
                     modelPosition.y += elevation;
                     vElevation = elevation;
@@ -46,13 +48,20 @@ export default class Water {
                 varying float vElevation;
 
                 void main() {
-                    vec3 waterColor = vec3(0.1, 0.4, 0.8);
+                    // Pacific Dark Blue
+                    vec3 deepColor = vec3(0.0, 0.05, 0.2);
+                    vec3 surfaceColor = vec3(0.0, 0.2, 0.5);
                     vec3 foamColor = vec3(1.0, 1.0, 1.0);
                     
-                    float mixStrength = (vElevation + 0.4) * 0.8;
-                    vec3 color = mix(waterColor, foamColor, mixStrength); // Simple foam on peaks
+                    // Mix deep and surface based on elevation
+                    float mixStrength = (vElevation + 1.0) * 0.5;
+                    vec3 waterColor = mix(deepColor, surfaceColor, mixStrength);
+
+                    // Foam on peaks (high elevation)
+                    float foamStrength = smoothstep(0.6, 1.0, vElevation);
+                    vec3 finalColor = mix(waterColor, foamColor, foamStrength);
                     
-                    gl_FragColor = vec4(color, 0.8);
+                    gl_FragColor = vec4(finalColor, 0.9);
                 }
             `,
             transparent: true,
@@ -65,7 +74,7 @@ export default class Water {
     setMesh() {
         this.mesh = new THREE.Mesh(this.geometry, this.material)
         this.mesh.rotation.x = - Math.PI * 0.5
-        this.mesh.position.y = -3
+        this.mesh.position.y = -4
         this.mesh.receiveShadow = true
         this.scene.add(this.mesh)
     }

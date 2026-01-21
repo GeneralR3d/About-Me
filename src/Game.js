@@ -62,7 +62,7 @@ export default class Game {
         // Camera State
         this.cameraAngle = Math.PI / 4
         this.cameraVerticalAngle = 0.5 // Radians above horizon
-        this.cameraRadius = 25
+        this.cameraRadius = 20
         this.isDragging = false
         this.previousMousePosition = { x: 0, y: 0 }
 

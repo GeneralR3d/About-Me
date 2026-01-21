@@ -14,7 +14,7 @@ export const content = [
     {
         type: "Experience",
         title: "SKY9 CAPITAL",
-        position: { x: 0, z: -20 }, // North (Center)
+        position: { x: 0, z: -19 }, // North (Center)
         rotation: 0,
         text: `Full Stack Software Engineer Intern
         Jul 2025 - Dec 2025 | San Francisco Bay Area
@@ -28,8 +28,8 @@ export const content = [
     {
         type: "Experience",
         title: "SYNAPXE",
-        position: { x: -12, z: -28 }, // North (Left)
-        rotation: 0,
+        position: { x: -15, z: -28 }, // North (Left)
+        rotation: 5,
         text: `Data Science and AI Intern
         Jan 2025 - Jul 2025 | Singapore
         1. Spearheaded development of ADAPT, an LLM-powered healthcare education platform for post-surgery patients.
@@ -41,8 +41,8 @@ export const content = [
     {
         type: "Experience",
         title: "P.T. SUPERBANK",
-        position: { x: 12, z: -28 }, // North (Right)
-        rotation: 0,
+        position: { x: 14, z: -28 }, // North (Right)
+        rotation: -5,
         text: `Software Engineering (AI) Intern
         Jun 2024 - Aug 2024 | Jakarta
         1. Contributed to a centralized AI knowledge base aimed at reducing response times by 40%.
@@ -52,7 +52,7 @@ export const content = [
     {
         type: "Experience",
         title: "NTU RESEARCH",
-        position: { x: -6, z: -36 }, // North (Left Back)
+        position: { x: -6, z: -18 }, // North (Left Back)
         rotation: 0,
         text: `Undergrad Student Researcher
         Aug 2023 - Jun 2024
@@ -84,8 +84,8 @@ export const content = [
     {
         type: "Education",
         title: "SJTU Shanghai",
-        position: { x: 36, z: -8 }, // East (Left)
-        rotation: 0,
+        position: { x: 45, z: -9 }, // East (Left)
+        rotation: 1,
         text: `Electrical and Computer Engineering 电子与计算机工程
         Sep 2024 - Jan 2025
         Semester Exchange`

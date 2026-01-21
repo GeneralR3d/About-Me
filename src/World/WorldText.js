@@ -37,8 +37,8 @@ export default class WorldText {
     create3DTitle(font) {
         const geometry = new TextGeometry(this.data.title, {
             font: font,
-            size: 1.5,
-            height: 0.4,
+            size: 0.8,
+            height: 0.2,
             curveSegments: 5,
             bevelEnabled: true,
             bevelThickness: 0.03,
@@ -86,8 +86,8 @@ export default class WorldText {
 
             const geometry = new TextGeometry(char, {
                 font: this.font,
-                size: 1.5,
-                height: 0.4,
+                size: 0.8,
+                height: 0.2,
                 curveSegments: 3,
                 bevelEnabled: true,
                 bevelThickness: 0.03,
@@ -273,7 +273,7 @@ export default class WorldText {
         // Position relative to title
         // Title Center Y is 2.0. Height is ~1.5. Top is ~2.75.
         // We want the bottom of the panel to be above the title.
-        const titleTopY = 2.75
+        const titleTopY = 2.4
         const margin = 0.5
         const panelBottomY = titleTopY + margin
 
