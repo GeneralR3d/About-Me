@@ -1,0 +1,135 @@
+TUAN DING REN
+
+LinkedIn: linkedin.com/in/ding-ren-tuan 
+GitHub: github.com/GeneralR3d
+
+
+EDUCATION
+
+NANYANG TECHNOLOGICAL UNIVERSITY (NTU), Singapore Bachelor of Engineering (Computer Engineering) 
+
+
+
+
+GPA: 4.52/5.00 (First Class Honors) 
+
+
+
+Honors: Dean's List Recipient AY22/23 
+
+
+Duration: Aug 2022 – Dec 2026 
+
+
+SHANGHAI JIAOTONG UNIVERSITY Semester Exchange: Electrical and Computer Engineering (ECE) 
+
+
+Duration: Sep 2024 – Jan 2025 
+
+
+MAHIDOL UNIVERSITY (NTU ASEAN Summer Exchange) Entrepreneurial Studies 
+
+
+Scholarship: Temasek Foundation Youths for Asia - Leadership Enrichment and Regional Networking holder 
+
+
+Date: Jul 2023 
+
+TECHNICAL SKILLS
+
+Programming Languages: Python, TypeScript, JavaScript, PostgreSQL with Prisma ORM, Embedded C 
+
+
+Software Frameworks: Lang Graph, Lang Chain, ReactJS, TailwindCSS, NestJS, Flask, Django 
+
+
+Machine Learning: Large Language Models (LLMs), Retrieval-Augmented Generation (RAG), Data-processing pipeline, Time-Series Regression/analysis 
+
+
+Project Management: JIRA, Confluence, Microsoft 365, Azure DevOps 
+
+INTERNSHIP & WORK EXPERIENCE
+Sky9 Capital (San Francisco Bay Area) | Full Stack Software Engineer Intern Jul 2025 – Dec 2025 
+
+
+Conceptualized and co-designed multiple consumer-focused web applications for the venture studio. 
+
+
+Developed backend APIs, middleware, and authentication (OAuth, JWT) using ReactTS, NestJS, and PostgreSQL. 
+
+
+Overhauled LLM-based AI data pipelines for credit card statement processing, achieving >90% recognition accuracy. 
+
+Deployed applications on Vercel, Render.com, and AWS using Nginx. 
+
+Monitored user behavior using Google Analytics and provided design suggestions for AI browser control agents. 
+
+Synapxe (Singapore) | Data Science and AI Intern Jan 2025 – Jul 2025 
+
+
+Spearheaded development of ADAPT, an LLM-powered healthcare education platform. 
+
+Achieved a 75% satisfaction rate during UAT trials at 5 public hospitals. 
+
+Converted an internal RAG-based chatbot to LangGraph, improving response quality by >30%. 
+
+Automated adversarial and RAG testing using RAGAS and Project Moonshot datasets. 
+
+P.T. Superbank (Jakarta) | Software Engineering (AI) Intern Jun 2024 – Aug 2024 
+
+
+Contributed to a centralized AI knowledge base aimed at reducing response times by 40%. 
+
+Evaluated 50+ Text Embedding models to guide development strategy. 
+
+Utilized AWS Bedrock for RAG applications and worked with CI/CD pipelines, Kubernetes, and Golang. 
+
+Nanyang Technological University | Undergrad Student Researcher Aug 2023 – Jun 2024 
+
+
+Trained ML models to predict the flight trajectory of badminton shuttlecocks. 
+
+Developed Python-based control system foundations for an AI-powered robotic sports assistant. 
+
+Grab Limited (Singapore) | Field Operations Specialist Feb 2022 – Jun 2022 
+
+
+Co-developed a web database for tracking employee performance and incentives. 
+
+Managed the pilot launch of an autonomous robot delivery service at Siloso Beach. 
+
+PROJECTS
+
+Sportify (Sports Recommendation Application) 
+
+Developed a web application to find sports locations in Singapore using real-time traffic and weather data. 
+
+
+Life Expectancy Prediction 
+
+Implemented a data pipeline on WHO datasets to predict life expectancy using ML models. 
+
+
+TI-RSLK MAX & STM-32 Projects 
+
+
+Programmed self-navigating robots and built a two-axis self-balancing gimbal using PID controllers and IMU sensors. 
+
+
+LICENSES & VOLUNTEERING
+
+TikTok Tech Immersion: Server, QA, and Site Reliability Engineering. 
+
+
+Google: AI Essentials. 
+
+
+NTU Accessible Education Unit: Student Notetaker for peers with learning difficulties. 
+
+
+
+Outdoor Adventure Club: Organizing Committee for overseas trekking expeditions. 
+
+
+
+Singapore Scout Association: Adult Volunteer (Venture).

@@ -1,0 +1,39 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    overflow: hidden;
+    background: #1e1e2d; /* Fallback dark bg */
+    font-family: 'Inter', sans-serif;
+}
+
+.webgl {
+    position: fixed;
+    top: 0;
+    left: 0;
+    outline: none;
+}
+
+#ui {
+    position: absolute;
+    bottom: 30px;
+    width: 100%;
+    text-align: center;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.instructions {
+    display: inline-block;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 14px;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
