@@ -13,8 +13,7 @@ export default class Game {
         this.scene = new THREE.Scene()
         this.scene.background = new THREE.Color('#87CEEB') // Sky Blue
 
-        // Fog for depth
-        this.scene.fog = new THREE.Fog('#87CEEB', 10, 50)
+
 
         // Camera
         this.camera = new THREE.PerspectiveCamera(45, this.width / this.height, 0.1, 100)
@@ -125,8 +124,8 @@ export default class Game {
         this.ambientLight = new THREE.AmbientLight('#ffffff', 0.6)
         this.scene.add(this.ambientLight)
 
-        this.directionalLight = new THREE.DirectionalLight('#ffffff', 1.5)
-        this.directionalLight.position.set(10, 20, 10)
+        this.directionalLight = new THREE.DirectionalLight('#ffaa00', 1.5)
+        this.directionalLight.position.set(10, 10, 50)
         this.directionalLight.castShadow = true
         this.directionalLight.shadow.camera.near = 0.1
         this.directionalLight.shadow.camera.far = 100

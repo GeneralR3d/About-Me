@@ -156,7 +156,7 @@ export default class Map {
             const z = Math.sin(angle) * radius
 
             // Line start (bottom) and end (top)
-            positions.push(x, -2, z)
+            positions.push(x, -5, z)
             positions.push(x, height, z)
         }
 
