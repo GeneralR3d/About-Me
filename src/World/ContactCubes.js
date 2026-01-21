@@ -65,7 +65,7 @@ export default class ContactCubes {
         const githubMaterial = createMaterialFromUrl(import.meta.env.BASE_URL + 'icons/github-logo-6532.png')
 
         this.githubCube = new THREE.Mesh(boxGeometry, githubMaterial)
-        this.githubCube.position.set(-3, 0, 0) // Start high to fall
+        this.githubCube.position.set(-4, 0, 3) // Start high to fall
         this.githubCube.castShadow = true
         this.githubCube.receiveShadow = true
         this.githubCube.userData.parent = this
@@ -83,7 +83,7 @@ export default class ContactCubes {
         const linkedinMaterial = createMaterialFromUrl(import.meta.env.BASE_URL + 'icons/black-linkedin-logo-15915.png')
 
         this.linkedinCube = new THREE.Mesh(boxGeometry, linkedinMaterial)
-        this.linkedinCube.position.set(3, 0, 0)
+        this.linkedinCube.position.set(4, 0, 3)
         this.linkedinCube.castShadow = true
         this.linkedinCube.receiveShadow = true
         this.linkedinCube.userData.parent = this
@@ -101,7 +101,7 @@ export default class ContactCubes {
         const gmailMaterial = createMaterialFromUrl(import.meta.env.BASE_URL + 'icons/google-gmail-black-24179.png')
 
         this.gmailCube = new THREE.Mesh(boxGeometry, gmailMaterial)
-        this.gmailCube.position.set(0, 0, 0)
+        this.gmailCube.position.set(0, 0, 3)
         this.gmailCube.castShadow = true
         this.gmailCube.receiveShadow = true
         this.gmailCube.userData.parent = this

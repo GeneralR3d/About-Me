@@ -4,8 +4,7 @@ export const content = [
         title: "TUAN DING REN",
         position: { x: 0, z: 0 },
         rotation: 0,
-        text: `
-        Languages: Python, TS, JS, C, SQL w Prisma ORM
+        text: `Languages: Python, TS, JS, C, SQL w Prisma ORM
         Frameworks: ReactTS, NestJS, Flask, Django, LangChain, LangGraph, TailwindCSS
         AI: LLMs, RAG, PyTorch, Time Series Analysis
         Tools: AWS, Auzre DevOps Docker, Git, Jira, Confluence

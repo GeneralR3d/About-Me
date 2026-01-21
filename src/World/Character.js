@@ -153,10 +153,54 @@ export default class Character {
 
             let moving = false
             this.speed = 0.15 // Reset speed
-            if (this.keys.up) { this.mesh.position.z -= this.speed; this.mesh.rotation.y = Math.PI; moving = true }
-            if (this.keys.down) { this.mesh.position.z += this.speed; this.mesh.rotation.y = 0; moving = true }
-            if (this.keys.left) { this.mesh.position.x -= this.speed; this.mesh.rotation.y = -Math.PI / 2; moving = true }
-            if (this.keys.right) { this.mesh.position.x += this.speed; this.mesh.rotation.y = Math.PI / 2; moving = true }
+            if (this.keys.up || this.keys.down || this.keys.left || this.keys.right) {
+                const camera = this.game.camera
+                const forward = new THREE.Vector3()
+                camera.getWorldDirection(forward)
+                forward.y = 0
+                forward.normalize()
+
+                const right = new THREE.Vector3()
+                right.crossVectors(forward, new THREE.Vector3(0, 1, 0)).normalize()
+
+                let dx = 0
+                let dy = 0 // dz in 2d logic, but we use x/z
+
+                if (this.keys.up) {
+                    dx += forward.x
+                    dy += forward.z
+                    moving = true
+                }
+                if (this.keys.down) {
+                    dx -= forward.x
+                    dy -= forward.z
+                    moving = true
+                }
+                if (this.keys.right) {
+                    dx += right.x
+                    dy += right.z
+                    moving = true
+                }
+                if (this.keys.left) {
+                    dx -= right.x
+                    dy -= right.z
+                    moving = true
+                }
+
+                if (moving) {
+                    // Normalize
+                    const len = Math.sqrt(dx * dx + dy * dy)
+                    dx /= len
+                    dy /= len
+
+                    this.mesh.position.x += dx * this.speed
+                    this.mesh.position.z += dy * this.speed
+
+                    // Rotation
+                    const angle = Math.atan2(dx, dy)
+                    this.mesh.rotation.y = angle
+                }
+            }
 
             // Restrict to Land (Radius ~50) for Fallback
             const maxRadius = 49.5
@@ -205,21 +249,38 @@ export default class Character {
         let moveZ = 0
         let moving = false
 
-        if (this.keys.up) {
-            moveZ = -1
-            moving = true
-        }
-        if (this.keys.down) {
-            moveZ = 1
-            moving = true
-        }
-        if (this.keys.left) {
-            moveX = -1
-            moving = true
-        }
-        if (this.keys.right) {
-            moveX = 1
-            moving = true
+        if (this.keys.up || this.keys.down || this.keys.left || this.keys.right) {
+            const camera = this.game.camera
+            const forward = new THREE.Vector3()
+            // Get direction camera is looking (in world space)
+            camera.getWorldDirection(forward)
+            forward.y = 0 // Flatten to ground
+            forward.normalize()
+
+            // Calculate Right vector (Forward x Up)
+            const right = new THREE.Vector3()
+            right.crossVectors(forward, new THREE.Vector3(0, 1, 0)).normalize()
+
+            if (this.keys.up) {
+                moveX += forward.x
+                moveZ += forward.z
+                moving = true
+            }
+            if (this.keys.down) {
+                moveX -= forward.x
+                moveZ -= forward.z
+                moving = true
+            }
+            if (this.keys.right) {
+                moveX += right.x
+                moveZ += right.z
+                moving = true
+            }
+            if (this.keys.left) {
+                moveX -= right.x
+                moveZ -= right.z
+                moving = true
+            }
         }
 
         // Normalize
