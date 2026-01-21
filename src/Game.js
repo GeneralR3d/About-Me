@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import Map from './World/Map.js'
 import Character from './World/Character.js'
+import ContactCubes from './World/ContactCubes.js'
 import Physics from './Utils/Physics.js'
 
 export default class Game {
@@ -88,6 +89,28 @@ export default class Game {
 
                 this.previousMousePosition = { x: e.clientX, y: e.clientY }
             }
+
+            // Cursor Hover Logic
+            if (this.raycaster && this.camera) {
+                this.mouse.x = (e.clientX / this.width) * 2 - 1
+                this.mouse.y = -(e.clientY / this.height) * 2 + 1
+
+                this.raycaster.setFromCamera(this.mouse, this.camera)
+                const intersects = this.raycaster.intersectObjects(this.scene.children, true)
+
+                let found = false
+                for (let i = 0; i < intersects.length; i++) {
+                    const object = intersects[i].object
+                    if (object.userData && object.userData.parent) {
+                        if (typeof object.userData.parent.onClick === 'function' ||
+                            typeof object.userData.parent.explode === 'function') {
+                            found = true
+                            break
+                        }
+                    }
+                }
+                this.canvas.style.cursor = found ? 'pointer' : 'auto'
+            }
         })
 
         // Initialize Raycaster
@@ -106,9 +129,15 @@ export default class Game {
             for (let i = 0; i < intersects.length; i++) {
                 const object = intersects[i].object
 
-                if (object.userData && object.userData.parent && typeof object.userData.parent.explode === 'function') {
-                    object.userData.parent.explode()
-                    break
+                if (object.userData && object.userData.parent) {
+                    if (typeof object.userData.parent.onClick === 'function') {
+                        object.userData.parent.onClick(object)
+                        break
+                    }
+                    if (typeof object.userData.parent.explode === 'function') {
+                        object.userData.parent.explode()
+                        break
+                    }
                 }
             }
         })
@@ -117,6 +146,7 @@ export default class Game {
     initWorld() {
         this.map = new Map(this)
         this.character = new Character(this)
+        this.contactCubes = new ContactCubes(this)
         this.tick()
     }
 
