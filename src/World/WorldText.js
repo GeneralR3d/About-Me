@@ -282,6 +282,7 @@ export default class WorldText {
         const panelCenterY = panelBottomY + (planeHeight / 2)
 
         this.panelMesh.position.set(0, panelCenterY, -2)
+        this.panelMesh.visible = false
 
         this.group.add(this.panelMesh)
     }
@@ -306,6 +307,11 @@ export default class WorldText {
         const uniqueMats = new Set(materials)
 
         if (dist < triggerDist) {
+            // Enable rendering if within range
+            if (!this.panelMesh.visible) {
+                this.panelMesh.visible = true
+            }
+
             // Fade In
             uniqueMats.forEach(mat => {
                 if (mat.opacity < 1) {
@@ -315,12 +321,21 @@ export default class WorldText {
             })
         } else {
             // Fade Out
+            let anyVisible = false
             uniqueMats.forEach(mat => {
                 if (mat.opacity > 0) {
                     mat.opacity -= fadeSpeed
                     if (mat.opacity < 0) mat.opacity = 0
                 }
+                if (mat.opacity > 0) {
+                    anyVisible = true
+                }
             })
+
+            // Disable rendering if completely transparent
+            if (!anyVisible) {
+                this.panelMesh.visible = false
+            }
         }
     }
 }
