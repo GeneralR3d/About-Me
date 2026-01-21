@@ -142,6 +142,31 @@ export default class Game {
                 }
             }
         })
+
+        // Audio
+        this.initAudio()
+    }
+
+    initAudio() {
+        this.backgroundMusic = new Audio('music/trimmed_music.m4a')
+        this.backgroundMusic.loop = true
+        this.backgroundMusic.volume = 0.4
+
+        const playPromise = this.backgroundMusic.play()
+        if (playPromise !== undefined) {
+            playPromise.catch(() => {
+                console.log("Autoplay prevented. Waiting for interaction to play music.")
+                const startAudio = () => {
+                    this.backgroundMusic.play()
+                    window.removeEventListener('click', startAudio)
+                    window.removeEventListener('keydown', startAudio)
+                    window.removeEventListener('touchstart', startAudio)
+                }
+                window.addEventListener('click', startAudio)
+                window.addEventListener('keydown', startAudio)
+                window.addEventListener('touchstart', startAudio)
+            })
+        }
     }
 
     initWorld() {
