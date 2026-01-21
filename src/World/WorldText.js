@@ -26,7 +26,7 @@ export default class WorldText {
 
         // Load Font for 3D Title
         const loader = new FontLoader()
-        loader.load('/fonts/helvetiker_bold.typeface.json', (font) => {
+        loader.load(import.meta.env.BASE_URL + 'fonts/helvetiker_bold.typeface.json', (font) => {
             this.font = font
             this.create3DTitle(font)
         })
