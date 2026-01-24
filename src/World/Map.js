@@ -55,7 +55,7 @@ export default class Map {
             const rough = this.noise.zoom2D(x * 0.8, z * 0.8) * 4 * mFactor
 
             // Tall peak
-            const mHeight = mFactor * 45
+            const mHeight = mFactor * 30
 
             // Combine
             y += mHeight + rough
