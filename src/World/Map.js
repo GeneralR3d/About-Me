@@ -19,13 +19,14 @@ export default class Map {
         this.water = new Water(game)
 
         this.createIsland()
-        this.populateResumeContent()
         this.createNature()
         this.createArrows()
 
         this.leaves = new Leaves(game)
 
         this.createLakeTahoe()
+
+        this.populateResumeContent()
     }
 
     // Base noise function
@@ -97,13 +98,63 @@ export default class Map {
             }
         }
 
+        // VALLEY OF FIRE (South -> Positive Z)
+        // Feature: Smooth, swirling sandstone waves
+        // Positioned around Z > 20
+        // VALLEY OF FIRE (South -> Positive Z)
+        // Feature: Smooth, swirling sandstone waves
+        // Positioned around Z > 35 (Reduced Area)
+        if (z > 35 && Math.abs(x) < 15) {
+            const vDist = Math.abs(x) // Distance from center strip
+            // Fade in the effect
+            const transition = Math.min(Math.max((z - 35) / 10, 0), 1)
+
+            if (transition > 0) {
+                // swirling waves pattern
+                // Use low freq noise for large smooth domes
+                const wave = Math.sin(x * 0.15 + z * 0.1) * Math.cos(z * 0.2) * 4
+
+                // Add stratified terraces or smooth lumps
+                const lumps = this.noise.zoom2D(x * 0.05, z * 0.05) * 6
+
+                // Combine and blend
+                // We want to override the base desert flatness a bit
+                const valleyH = wave + lumps + 2 // Base height boost
+
+                y = THREE.MathUtils.lerp(y, valleyH, transition)
+            }
+        }
+
         return Math.max(y, -2)
     }
 
-    // Public method for external components
+    // Public method for external components (Terrain Only)
     getHeightAt(x, z) {
         return this._computeNoiseHeight(x, z)
     }
+
+    // New method: Get height on top of ANY object (terrain, trees, rocks)
+    getSurfaceHeightAt(x, z) {
+        const raycaster = new THREE.Raycaster()
+        // Cast from high up downwards - start higher to ensure we catch everything
+        raycaster.set(new THREE.Vector3(x, 300, z), new THREE.Vector3(0, -1, 0))
+
+        // Only intersect with the ground terrain and lake, ignoring trees/rocks
+        const targets = []
+        if (this.island) targets.push(this.island)
+        if (this.lake) targets.push(this.lake)
+
+        const intersects = raycaster.intersectObjects(targets, false)
+
+        if (intersects.length > 0) {
+            // First hit is the highest object (since ray goes down)
+            return intersects[0].point.y
+        }
+
+        // Fallback to terrain height
+        return this._computeNoiseHeight(x, z)
+    }
+
 
     createIsland() {
         const geometry = new THREE.PlaneGeometry(120, 120, 150, 150) // Increased resolution for sharpness
@@ -179,7 +230,7 @@ export default class Map {
                     colors.push(colorRoad.r, colorRoad.g, colorRoad.b)
                 }
             }
-            else if (lDist < 10 && h < 2.0) {
+            else if (lDist < 10 && h < 1.0) {
                 // Lake Bed (Sand/Rock)
                 // If deep, maybe darker?
                 if (h < 0) {
@@ -212,11 +263,53 @@ export default class Map {
                 }
 
                 if (t > 0) {
-                    // Mix Green and Sand
-                    const r = colorGreen.r + (colorSand.r - colorGreen.r) * t
-                    const g = colorGreen.g + (colorSand.g - colorGreen.g) * t
-                    const b = colorGreen.b + (colorSand.b - colorGreen.b) * t
-                    colors.push(r, g, b)
+                    // VALLEY OF FIRE COLORING
+                    // Z > 35 area, Restricted Width
+                    if (z_world > 35 && Math.abs(x) < 15) {
+                        // Striated Rock Pattern
+                        // Use Y height + Noise + Z to create bands
+                        const bandNoise = this.noise.zoom2D(x * 0.1, z_world * 0.1) * 2
+                        const striation = (h + bandNoise + z_world * 0.2) % 3
+
+                        // Fire Colors
+                        const colorRedRock = new THREE.Color('#d35400') // Burnt Orange
+                        const colorDeepRed = new THREE.Color('#c0392b') // Deep Red
+                        const colorWhiteRock = new THREE.Color('#f5cba7') // Sandstone White
+
+                        let rockColor
+                        if (striation < 1) {
+                            rockColor = colorDeepRed
+                        } else if (striation < 2) {
+                            rockColor = colorRedRock
+                        } else {
+                            rockColor = colorWhiteRock
+                        }
+
+                        // Blend from normal Desert Sand to Red Rock
+                        const rockT = Math.min(Math.max((z_world - 35) / 10, 0), 1)
+
+                        // First mix Green -> Sand
+                        // Actually, if we are deep in desert (t=1), it's Sand.
+                        // Then Sand -> Red Rock
+
+                        // Base Desert Color (Sand)
+                        const rSand = colorSand.r
+                        const gSand = colorSand.g
+                        const bSand = colorSand.b
+
+                        // Mix Sand with Rock
+                        const r = rSand + (rockColor.r - rSand) * rockT
+                        const g = gSand + (rockColor.g - gSand) * rockT
+                        const b = bSand + (rockColor.b - bSand) * rockT
+
+                        colors.push(r, g, b)
+                    } else {
+                        // Standard Desert Sand (Mix Green -> Sand)
+                        const r = colorGreen.r + (colorSand.r - colorGreen.r) * t
+                        const g = colorGreen.g + (colorSand.g - colorGreen.g) * t
+                        const b = colorGreen.b + (colorSand.b - colorGreen.b) * t
+                        colors.push(r, g, b)
+                    }
                 } else {
                     colors.push(colorGreen.r, colorGreen.g, colorGreen.b)
                 }
@@ -286,21 +379,75 @@ export default class Map {
     }
 
     createLakeTahoe() {
-        // Radius 9.5 to extend slightly beyond the "shoreline" calculated at ~8.3
-        // This ensures the edge is buried in the terrain bank
-        const geometry = new THREE.CircleGeometry(9.5, 64)
+        // Use PlaneGeometry for better vertex resolution to support waves
+        // Size 19x19 relative to diameter of ~9.5 radius circle
+        // The corners will be buried by the terrain
+        const geometry = new THREE.PlaneGeometry(19, 19, 64, 64)
+
         const material = new THREE.MeshStandardMaterial({
-            color: '#4fc3f7', // Slightly deeper blue
-            metalness: 0.2,
+            color: '#4fc3f7',
+            metalness: 0.4,
             roughness: 0.1,
             transparent: true,
             opacity: 0.7,
             side: THREE.DoubleSide
         })
+
+        const center = new THREE.Vector2(-25, -5)
+
+        material.onBeforeCompile = (shader) => {
+            shader.uniforms.uTime = { value: 0 }
+            shader.uniforms.uPlayerPosition = { value: new THREE.Vector3(0, 0, 0) }
+            shader.uniforms.uLakeCenter = { value: center }
+
+            this.lake.material.userData.shader = shader
+
+            shader.vertexShader = `
+                uniform float uTime;
+                uniform vec3 uPlayerPosition;
+                uniform vec2 uLakeCenter;
+                varying float vElevation;
+            ` + shader.vertexShader
+
+            shader.vertexShader = shader.vertexShader.replace(
+                '#include <begin_vertex>',
+                `
+                #include <begin_vertex>
+                
+                // Work in World Space for interaction
+                vec4 worldPos = modelMatrix * vec4(position, 1.0);
+                
+                // Distance to player
+                float distToPlayer = distance(worldPos.xz, uPlayerPosition.xz);
+                
+                // 1. Ambient Ambient Waves (Sine waves)
+                float ambient = sin(worldPos.x * 1.5 + uTime * 1.0) * 0.05 
+                              + cos(worldPos.z * 1.2 + uTime * 0.8) * 0.05;
+
+                // 2. Interactive Ripples (Radial sine from player)
+                // Only affect if player is close
+                float interactionRadius = 6.0;
+                float strength = smoothstep(interactionRadius, 0.0, distToPlayer);
+                
+                // Wave: sin(dist - time) moves outwards
+                float ripple = sin(distToPlayer * 5.0 - uTime * 8.0) * 0.2 * strength;
+                
+                float totalElevation = ambient + ripple;
+                
+                // Apply to local Z (which is World Y due to -90 X rotation)
+                transformed.z += totalElevation;
+                
+                vElevation = totalElevation;
+                `
+            )
+        }
+
         this.lake = new THREE.Mesh(geometry, material)
         this.lake.rotation.x = -Math.PI / 2
         this.lake.position.set(-25, 1.5, -5) // Water Level
         this.scene.add(this.lake)
+
+        // NO PHYSICS BODY: Allows character to walk through water
     }
 
     createBoundaryLines() {
@@ -334,17 +481,41 @@ export default class Map {
     }
 
     // Populate Resume Content
+    // Populate Resume Content
     populateResumeContent() {
         this.texts = []
+
+        // Update world matrices once before measuring heights to ensure raycasts hit correct positions
+        if (this.scene) this.scene.updateMatrixWorld(true)
+
         content.forEach(data => {
-            let h = 0
-            if (data.position.x !== undefined && data.position.z !== undefined) {
-                h = this.getHeightAt(data.position.x, data.position.z)
-            }
-            // Add a small offset to ensure it sits on top.
-            // getHeightAt returns noise value. Terrain is noise - 0.5.
-            // So h is 0.5 above terrain. +1 makes it 1.5 above terrain.
-            this.texts.push(new WorldText(this.game, data, h + 1))
+            let maxH = -Infinity
+
+            // Calculate direction vectors based on rotation
+            // Default text runs along X axis (Left to Right)
+            // data.rotation is rotation around Y axis
+            const rot = data.rotation || 0
+            const cos = Math.cos(rot)
+            const sin = Math.sin(rot)
+
+            // Sample points along the width of the text to handle slopes
+            // "SKY9 CAPITAL" (12 chars) -> Width ~8-10 units?
+            // Sampling Center, Left (-4), Right (+4)
+            const samples = [0, -4, 4, -2, 2]
+
+            samples.forEach(offset => {
+                // Transform local X offset to world space
+                const wx = data.position.x + offset * cos
+                const wz = data.position.z + offset * sin
+
+                const h = this.getSurfaceHeightAt(wx, wz)
+                if (h > maxH) maxH = h
+            })
+
+            if (maxH === -Infinity) maxH = 0
+
+            // Add safe offset
+            this.texts.push(new WorldText(this.game, data, maxH + 1))
         })
     }
 
@@ -444,5 +615,14 @@ export default class Map {
         if (this.water) this.water.update()
         if (this.leaves) this.leaves.update()
         if (this.texts) this.texts.forEach(t => t.update())
+
+        // Update Lake Shader
+        if (this.lake && this.lake.material && this.lake.material.userData.shader) {
+            const shader = this.lake.material.userData.shader
+            shader.uniforms.uTime.value = this.game.clock.getElapsedTime()
+            if (this.game.character && this.game.character.mesh) {
+                shader.uniforms.uPlayerPosition.value.copy(this.game.character.mesh.position)
+            }
+        }
     }
 }

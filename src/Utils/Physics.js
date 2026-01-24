@@ -111,6 +111,44 @@ export default class Physics {
         return new this.ammo.btCapsuleShape(radius, height)
     }
 
+    createCylinderShape(radius, height) {
+        const halfExtents = new this.ammo.btVector3(radius, height * 0.5, radius)
+        return new this.ammo.btCylinderShape(halfExtents)
+    }
+
+    // Creates a cylinder rotated 90 degrees on X to match CircleGeometry (Z-up)
+    createDiscShape(radius, height) {
+        const cylinder = this.createCylinderShape(radius, height)
+
+        const compound = new this.ammo.btCompoundShape()
+        const transform = new this.ammo.btTransform()
+        transform.setIdentity()
+
+        // Rotate 90 degrees on X to align Y-axis cylinder to Z-axis
+        const q = new this.ammo.btQuaternion()
+        q.setEulerZYX(0, 0, Math.PI / 2) // setEulerZYX takes (yaw, pitch, roll) -> (Z, Y, X)? 
+        // Docs say setEulerZYX(z, y, x). So roll is X.
+        // Or uses setRotation with quaternion.
+        // Let's use setFromAxisAngle if available or setRotation.
+        // In Ammo/Bullet, setEulerZYX is (yaw, pitch, roll) around Y, X, Z? Or Z, Y, X.
+        // standard is Z, Y, X.
+        // Let's rely on setRotation with a quaternion created from Axis Angle.
+
+        // Quat from Axis X, 90 deg.
+        // q = [sin(45)*1, 0, 0, cos(45)]
+        const angle = Math.PI / 2
+        const s = Math.sin(angle / 2)
+        q.setX(s)
+        q.setY(0)
+        q.setZ(0)
+        q.setW(Math.cos(angle / 2))
+
+        transform.setRotation(q)
+
+        compound.addChildShape(transform, cylinder)
+        return compound
+    }
+
     createTerrainBody(mesh, width, depth, widthSegments, depthSegments, heightData, minHeight, maxHeight) {
         if (!this.ammo) return
 
