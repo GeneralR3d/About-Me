@@ -7,40 +7,35 @@ export const content = [
         text: `Languages: Python, TS, JS, C, SQL w Prisma ORM
         Frameworks: ReactTS, NestJS, Flask, Django, LangChain, LangGraph, TailwindCSS
         AI: LLMs, RAG, PyTorch, Time Series Analysis
-        Tools: AWS, Auzre DevOps Docker, Git, Jira, Confluence
-        `
+        Tools: AWS, Auzre DevOps Docker, Git, Jira, Confluence`
     },
     {
         type: "Experience",
         title: "SKY9 CAPITAL",
-        position: { x: 0, z: -19 }, // North (Center)
+        position: { x: 0, z: -32.5 }, // North (Center)
         rotation: 0,
         text: `Full Stack Software Engineer Intern
         Jul 2025 - Dec 2025 | San Francisco Bay Area
-        1. Conceptualized and co-designed multiple consumer-focused web applications for the venture studio
-        2. Full-stack development and testing of backend APIs, middleware, auth methods including OAuth, JWT tokens, image recognition libraries like TesseractJS
-        3. Designed and overhauled LLM-based AI data pipelines for processing user credit card statements and transactions through multi-step context engineering, achieving over 90% recognition accuracy
-        4. Deployment and maintenance of these web applications on cloud-hosting solutions like Vercel, Render.com, AWS
-        5. Executed customer acquisition campaign and early-stage traffic and user behavior monitoring using Google Analytics
-        6. Provided architectural and design suggestions for AI-based browser control agent`
+        1. Developed full-stack consumer web apps with secure APIs (OAuth/JWT) and OCR integration.
+        2. Engineered LLM pipelines for financial data processing, reaching 90%+ accuracy.
+        3. Managed cloud deployments on AWS/Vercel and analyzed user behavior via Google Analytics.
+        4. Advised on AI browser agent architecture.`
     },
     {
         type: "Experience",
         title: "SYNAPXE",
-        position: { x: -15, z: -28 }, // North (Left)
+        position: { x: -13, z: -30 }, // North (Left)
         rotation: 5,
         text: `Data Science and AI Intern
         Jan 2025 - Jul 2025 | Singapore
-        1. Spearheaded development of ADAPT, an LLM-powered healthcare education platform for post-surgery patients.
-        2. Achieved a 75% satisfaction rate during UAT trials at 5 public hospitals.
-        3. Converted architecture of internal RAG-based chatbot to LangGraph to query structured and unstructured data, improving response quality by >30%.
-        4. Developed testing procedures and conducted automated script testing of RAG-based chatbots using the RAGAS framework, using evaluation metrics like contextual recall, faithfulness, response relevancy and factual correctness.
-        5. Automated adversarial and RAG testing using RAGAS and Project Moonshot datasets.`
+        1. Spearheaded ADAPT, an LLM-powered healthcare platform, achieving 75% satisfaction across 5 public hospitals.
+        2. Optimized RAG-based chatbots using LangGraph for structured/unstructured data, improving response quality by >30%.
+        3. Automated RAG evaluation and adversarial testing using RAGAS and Project Moonshot frameworks.`
     },
     {
         type: "Experience",
         title: "P.T. SUPERBANK",
-        position: { x: 14, z: -28 }, // North (Right)
+        position: { x: 10, z: -23 }, // North (Right)
         rotation: -5,
         text: `Software Engineering (AI) Intern
         Jun 2024 - Aug 2024 | Jakarta
@@ -55,8 +50,8 @@ export const content = [
         rotation: 0,
         text: `Undergrad Student Researcher
         Aug 2023 - Jun 2024
-        1. Established research methodologies for pre-processing trajectory information and training of a machine learning (ML) model that can be used to accurately predict flight trajectory of a badminton shuttlecock mid air.
-        2. Developed foundations of a control system script in Python for robot to intercept shuttlecock and return it to the player, to create a AI-powered robotic sports assistant`
+        1. Researched ML methodologies for pre-processing and predicting shuttlecock flight trajectories.
+        2. Developed Python control systems for a robotic sports assistant to intercept and return shuttlecocks.`
     },
     {
         type: "Experience",
@@ -77,8 +72,7 @@ export const content = [
         text: `Bachelor of Engineering(Computer Engineering)
         Aug 2022 - Dec 2026
         GPA: 4.52 / 5.00(First Class Honors)
-        Dean's List Recipient AY22/23
-        `
+        Dean's List Recipient AY22/23`
     },
     {
         type: "Education",
@@ -102,32 +96,30 @@ export const content = [
     {
         type: "Projects",
         title: "SPORTIFY",
-        position: { x: -30, z: -6 }, // West (Center)
+        position: { x: -22, z: -2 }, // West (Center)
         rotation: 0,
-        text: `Spearheaded development of Sportify, a free web application that helps users find the best sports locations in Singapore, based on real-time traffic, court-utilization and weather information. It alleviates problem of overcrowding at specific sports locations and provides suggestions to the best sports locations for users to head to.
-`
+        text: `Developed a web application that recommends optimal sports locations in Singapore by analyzing real-time traffic, court utilization, and weather data to reduce overcrowding.`
     },
     {
         type: "Projects",
         title: "Life Expectancy Prediction",
         position: { x: -36, z: -12 }, // West (Left)
-        rotation: 0,
+        rotation: 1,
         text: `Implemented data processing pipeline procedures on a World Health Organization(WHO) dataset. Trained several machine learning models based on attributes to predict average life expectancy around the world`
     },
     {
         type: "Projects",
         title: "TI - RSLK MAX",
-        position: { x: -36, z: 8 }, // West (Right)
+        position: { x: -36, z: 12 }, // West (Right)
         rotation: 0,
-        text: `Calibrated tachometer, IR, Ultrasonic sensors on a TI-TSLK MAX robotic platform to program a mini self-navigating robot with different settings and functionalities. Pulse-wave modulation at low level to control motor timing and speed`
+        text: `Programmed a self-navigating robot on the TI-RSLK MAX platform by integrating various sensors and implementing low-level PWM motor control.`
     },
     {
         type: "Projects",
         title: "STM-32 Self-Balancing Gimbal",
         position: { x: -42, z: 0 }, // West (Back)
-        rotation: 0,
-        text: `Performed sensor integration of accelerometer and gyroscope data on Inertial Measurement Unit (IMU)
-        Implemented a PID controller making use of IMU data to devise a self-correcting two-axis gimbal mounted on servo motors`
+        rotation: -5,
+        text: `Integrated IMU sensor data with a PID controller to develop a self-correcting two-axis gimbal for real-time stabilization.`
     },
     {
         type: "Activities",
@@ -135,8 +127,7 @@ export const content = [
         position: { x: 0, z: 30 }, // South (Center)
         rotation: 0,
         text: `Jul 2023 – Apr 2024
-        Provided clear, accurate and comprehensive notetaking as a record of classes and lectures for fellow peers 
-        Advocated for inclusivity and accessibility of education at NTU to students with additional sensory and learning difficulties, specifically visual, auditory and writing challenges`
+        Provided comprehensive lecture notes and advocated for educational accessibility for peers with diverse learning needs.`
     },
     {
         type: "Activities",
@@ -144,8 +135,7 @@ export const content = [
         position: { x: -12, z: 35 }, // South (Right when looking South, or West-South)
         rotation: 0,
         text: `Aug 2023 – Aug 2024
-        Co-organized and led a team of 40 individuals on week-long overseas hiking/trekking adventures.
-        Coordinated with foreign adventure tour guide agencies on hiking, accommodation, and transport arrangements.`
+        Led week-long overseas trekking expeditions for 40 individuals while coordinating logistics with international agencies.`
     },
     {
         type: "Activities",
@@ -153,7 +143,6 @@ export const content = [
         position: { x: 12, z: 35 }, // South (Left when looking South)
         rotation: 0,
         text: `The Singapore Scout Association, Jan 2017- Jan 2019
-        Engaged in planning, organization and execution of scout camps for 40 scouts during school holidays
-        Assisted in organizing area campfires and cohesion activities involving 8 secondary schools`
+        Planned and executed scout camps for 40 participants and coordinated large-scale campfire events and cohesion activities across eight secondary schools.`
     }
 ]
