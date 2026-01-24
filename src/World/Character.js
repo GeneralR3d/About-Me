@@ -190,8 +190,13 @@ export default class Character {
                 if (moving) {
                     // Normalize
                     const len = Math.sqrt(dx * dx + dy * dy)
-                    dx /= len
-                    dy /= len
+                    if (len > 0.0001) {
+                        dx /= len
+                        dy /= len
+                    } else {
+                        dx = 0
+                        dy = 0
+                    }
 
                     this.mesh.position.x += dx * this.speed
                     this.mesh.position.z += dy * this.speed
@@ -286,8 +291,13 @@ export default class Character {
         // Normalize
         if (moving) {
             const length = Math.sqrt(moveX * moveX + moveZ * moveZ)
-            moveX /= length
-            moveZ /= length
+            if (length > 0.0001) {
+                moveX /= length
+                moveZ /= length
+            } else {
+                moveX = 0
+                moveZ = 0
+            }
 
             // Set Rotation based on movement
             const angle = Math.atan2(moveX, moveZ)
