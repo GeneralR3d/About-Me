@@ -12,7 +12,7 @@ export const content = [
     {
         type: "Experience",
         title: "SKY9 CAPITAL",
-        position: { x: 0, z: -32.5 }, // North (Center)
+        position: { x: -6, z: -18 },// North (Left Back)
         rotation: 0,
         text: `Full Stack Software Engineer Intern
         Jul 2025 - Dec 2025 | San Francisco Bay Area
@@ -46,7 +46,7 @@ export const content = [
     {
         type: "Experience",
         title: "NTU RESEARCH",
-        position: { x: -6, z: -18 }, // North (Left Back)
+        position: { x: 0, z: -32.5 }, // North (Center),
         rotation: 0,
         text: `Undergrad Student Researcher
         Aug 2023 - Jun 2024
