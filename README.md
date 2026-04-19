@@ -1,6 +1,6 @@
 # [3D Portfolio Website](https://generalr3d.github.io/About-Me/)
 
-Hello! Im Ding Ren, and this is my personal website. This website reimagines the traditional resume as an immersive 3D game. Instead of reading a static document, you explore a physics-enabled world where my career milestones are part of the terrain.
+Hello! Im Ding Ren, and this is my personal website in the form of a game. This website reimagines the traditional resume as an immersive 3D game. Instead of reading a static document, you explore a physics-enabled world where my career milestones are part of the terrain.
 
 Walk around, interact with the environment, and discover my professional history.
 
